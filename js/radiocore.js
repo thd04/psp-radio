@@ -107,43 +107,23 @@ function initProc () {
 // ------------------------------------------------------------------------
 var switchState = false; // スイッチの ON/OFF 状態を保持する変数
 function sw ( mode ) {
-	switch ( mode ) {
-	case 2: // onMouseDown
-		if ( bNowHttpGetIsBusy ) return; // http get 処理中は無効
-		// 文字列パース処理中のときは、その処理を中断させます。
-		if ( bInAnalizingStationListString ) bForcedExitFlag = true;
-		if ( isPSPRadio )
-			psp.sysRadioPlayEffectSound (); // 音演出のため、クック音を鳴らします。
-		switchState = !switchState; // スイッチのステートを反転させます。
-		if ( switchState ) { // ON になるとき
-			document.toggleSwitch.src = "images/on.gif"; // 絵の差し替え
-			// "ON" 用配列からキーワードを一つチョイスします。
-			// 注）properties.js に記述された "ON" 用配列は、要素数が１つないので
-			// 　　常に同じものが選ばれますが、要素数が２以上のケースに対応するために
-			// 　　"OFF" 時と同等の処理を行います。
-			var n = onKeywords.length;
-			var m = Math.floor (Math.random () * (n + 1));
-			if ( n <= m ) m = n - 1;
-			// 放送局リスト取得の準備を行います。
-			prepareForGetStationList (onKeywords [m]);
-		}
-		else { // OFF になるとき
-			document.toggleSwitch.src = "images/off.gif"; // 絵の差し替え
-			var n = offKeywords.length;
-			// "OFF" 用配列からキーワードを一つチョイスします。
-			var m = Math.floor (Math.random () * (n + 1));
-			if ( n <= m ) m = n - 1;
-			// 放送局リスト取得の準備を行います。
-			prepareForGetStationList (offKeywords [m]);
-		}
-		streamStatusCheckProcWorkState = 0; // ステートをリセット
-		// 「チューニングしている状態」を表現するための音の演出
-		if ( Math.random () < 0.5 ) psp.sysRadioSetAudioShiftWidth (-25);
-		else psp.sysRadioSetAudioShiftWidth (15);
-		break;
-	default:
-		break;
-	}
+    switch ( mode ) {
+    case 2: // Wenn man auf den Schalter drückt
+        if (isPSPRadio) psp.sysRadioPlayEffectSound(); 
+        
+        switchState = !switchState; 
+        
+        if (switchState) { 
+            document.toggleSwitch.src = "images/on.gif";
+            tune(0); // Starte deine TruckersFM
+        } else { 
+            document.toggleSwitch.src = "images/off.gif";
+            if (isPSPRadio) psp.sysRadioStop(); // Stop
+        }
+        break;
+    default:
+        break;
+    }
 }
 
 // ------------------------------------------------------------------------
