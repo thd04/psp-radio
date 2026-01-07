@@ -232,15 +232,23 @@ function httpGetProc () {
 // 受信開始関数
 // 注）放送局リストの stationNumber で指定された放送局に接続し受信を開始します。
 // ------------------------------------------------------------------------
-function tune ( stationNumber ) {
-	if ( numStationList == 0 ) return; // 放送局リストが空の場合は return します。
-	if ( numStationList <= stationNumber ) return; // 範囲外の場合も return します。
-	psp.sysRadioBusyIndicator (1); // ビジーアイコン表示を ON にします。
-	// M3U データにアクセスするための URL を組み立てます。
-	var m3uURL = icecastM3uUrl + stationArray [stationNumber].m3u;
-	// M3U データの URL を指定し、放送の受信を開始します。
-	psp.sysRadioPlayM3u
-		(m3uURL, userAgentForGetM3u, userAgentForPlayStream);
+ffunction tune(stationNumber) {
+    if (!isPSPRadio) return;
+    
+    psp.sysRadioBusyIndicator(1); // Zeige Lade-Icon
+    
+    // PFAD ZU DEINER DATEI:
+    // Wenn die listen.pls im gleichen Ordner wie index.html liegt:
+    var m3uURL = "listen.pls"; 
+    
+    // Wir nutzen PlayPls, da deine Datei eine .pls ist
+    psp.sysRadioPlayPls(m3uURL, userAgentForPlayStream, userAgentForPlayStream);
+    
+    // Nach kurzer Verzögerung Ton einschalten
+    setTimeout(function() {
+        psp.sysRadioSetSubVolume(255);
+        psp.sysRadioBusyIndicator(0);
+    }, 2000);
 }
 
 // ------------------------------------------------------------------------
